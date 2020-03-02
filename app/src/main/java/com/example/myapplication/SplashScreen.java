@@ -5,29 +5,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.myapplication.activities.TodayExpenseActivity;
+import com.example.myapplication.activities.MainActivity;
 
-import java.sql.Time;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity {
+public class SplashScreen extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        setContentView(R.layout.activity_splash_screen);
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
                 finish();
-
-                Intent todayExpenseActivity = new Intent(MainActivity.this, TodayExpenseActivity.class);
-                startActivity(todayExpenseActivity);
+                Intent rateCalculatorRateIntent = new Intent(SplashScreen.this, MainActivity.class);
+                startActivity(rateCalculatorRateIntent);
             }
         };
 
+        // Run timerTask after delaying 3 seconds
         Timer counter = new Timer();
         counter.schedule(timerTask, 3000);
     }
