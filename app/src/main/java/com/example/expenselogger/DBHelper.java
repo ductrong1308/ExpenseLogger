@@ -1,14 +1,12 @@
-package com.example.myapplication;
+package com.example.expenselogger;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.myapplication.DBEntries.ExpenseDetailsEntry;
-import com.example.myapplication.DBEntries.ExpenseTypeEntry;
-import com.example.myapplication.DBEntries.SettingsEntry;
-
-import java.util.Set;
+import com.example.expenselogger.DBEntries.ExpenseDetailsEntry;
+import com.example.expenselogger.DBEntries.ExpenseTypeEntry;
+import com.example.expenselogger.DBEntries.SettingsEntry;
 
 public class DBHelper extends SQLiteOpenHelper {
 

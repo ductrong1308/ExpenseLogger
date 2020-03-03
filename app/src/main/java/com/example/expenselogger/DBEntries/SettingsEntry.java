@@ -1,4 +1,4 @@
-package com.example.myapplication.DBEntries;
+package com.example.expenselogger.DBEntries;
 
 import android.provider.BaseColumns;
 

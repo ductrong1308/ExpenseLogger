@@ -1,11 +1,11 @@
-package com.example.myapplication;
+package com.example.expenselogger;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.myapplication.activities.MainActivity;
+import com.example.expenselogger.activities.MainActivity;
 
 import java.util.Timer;
 import java.util.TimerTask;

@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.expenselogger;
 
 import android.content.Context;
 

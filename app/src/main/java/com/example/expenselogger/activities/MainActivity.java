@@ -1,4 +1,4 @@
-package com.example.myapplication.activities;
+package com.example.expenselogger.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.example.myapplication.DBHelper;
-import com.example.myapplication.R;
+import com.example.expenselogger.DBHelper;
+import com.example.expenselogger.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
         final SQLiteDatabase wdb = dbHelper.getWritableDatabase();
         final SQLiteDatabase rdb = dbHelper.getReadableDatabase();
 
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
 
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
             Fragment selectedFragment = null;
-            switch (menuItem.getItemId()){
+            switch (menuItem.getItemId()) {
                 case R.id.nav_home:
                     selectedFragment = new HomeFragment();
                     break;
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    protected void onDestroy(){
+    protected void onDestroy() {
         dbHelper.close();
         super.onDestroy();
     }
