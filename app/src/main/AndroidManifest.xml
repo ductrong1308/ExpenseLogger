@@ -11,9 +11,6 @@
         android:theme="@style/AppTheme">
         <activity android:name=".activities.SignUpActivity"></activity>
         <activity android:name=".activities.LoginActivity" />
-        <activity
-            android:name=".ui.login.LoginActivity"
-            android:label="@string/title_activity_login" />
         <activity android:name=".activities.MainActivity" />
         <activity android:name=".SplashScreen">
             <intent-filter>
