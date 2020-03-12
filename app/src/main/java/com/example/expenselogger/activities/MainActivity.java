@@ -6,24 +6,24 @@ import androidx.fragment.app.Fragment;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
-import com.example.expenselogger.DBHelper;
+import com.example.expenselogger.db.DBHelper;
 import com.example.expenselogger.R;
+import com.example.expenselogger.db.DBoperationSupport;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private DBHelper dbHelper;
+    SQLiteDatabase wdb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dbHelper = new DBHelper(this);
-        final SQLiteDatabase wdb = dbHelper.getWritableDatabase();
-        final SQLiteDatabase rdb = dbHelper.getReadableDatabase();
+        wdb = DBoperationSupport.getWritable(this);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
@@ -61,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
     };
 
     protected void onDestroy() {
-        dbHelper.close();
+        DBoperationSupport.close();
         super.onDestroy();
+        Log.d("MainActivity","onDestroy");
     }
 }
