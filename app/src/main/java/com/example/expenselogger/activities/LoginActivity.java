@@ -3,6 +3,7 @@ package com.example.expenselogger.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         wdb = DBoperationSupport.getWritable(this);
+        final SharedPreferences sharedPref = SharedPrefHandler.getSharedPref(this);
 
         TextView signUp = (TextView) findViewById(R.id.textViewSignup);
         signUp.setMovementMethod(LinkMovementMethod.getInstance());
@@ -61,9 +63,11 @@ public class LoginActivity extends AppCompatActivity {
                     String userId = cursor.getString(cursor.getColumnIndex("id"));
                     String userFirstName = cursor.getString(cursor.getColumnIndex("firstName"));
                     String userLastName = cursor.getString(cursor.getColumnIndex("lastName"));
+                    cursor.close();
+                    // Saving these data to SharedPref for later use purpose.
                     SharedPrefHandler.storeData("USERID", userId, LoginActivity.this);
-                    SharedPrefHandler.storeData("USERFNAME", userId, LoginActivity.this);
-                    SharedPrefHandler.storeData("USERLNAME", userId, LoginActivity.this);
+                    SharedPrefHandler.storeData("USERFNAME", userFirstName, LoginActivity.this);
+                    SharedPrefHandler.storeData("USERLNAME", userLastName, LoginActivity.this);
 
                     Intent main = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(main);

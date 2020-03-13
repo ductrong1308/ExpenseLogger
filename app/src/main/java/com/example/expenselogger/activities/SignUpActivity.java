@@ -2,7 +2,10 @@ package com.example.expenselogger.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -12,13 +15,18 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.expenselogger.R;
+import com.example.expenselogger.db.DBoperationSupport;
 
 public class SignUpActivity extends AppCompatActivity {
+
+    SQLiteDatabase wdb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        wdb = DBoperationSupport.getWritable(this);
 
         final EditText txtFirstName = (EditText) findViewById(R.id.txtFirstName);
         final EditText txtLastName = (EditText) findViewById(R.id.txtLastName);
@@ -37,51 +45,55 @@ public class SignUpActivity extends AppCompatActivity {
                 String password = txtSignUpPassword.getText().toString();
                 String rePassword = txtSignUpRePassword.getText().toString();
 
-                if(firstName.length() == 0){
+                if (firstName.length() == 0) {
                     errorMessage = "Please enter your First Name";
                     txtFirstName.requestFocus();
-                }
-                else if(lastName.length() == 0){
+                } else if (lastName.length() == 0) {
                     errorMessage = "Please enter your Last Name";
                     txtLastName.requestFocus();
-                }
-                else if(email.length() == 0 || !isValidEmail(email)){
+                } else if (email.length() == 0 || !isValidEmail(email)) {
                     errorMessage = "Invalid email address";
                     txtSignUpEmail.requestFocus();
-                }
-
-                else if (password.length() == 0){
+                } else if (password.length() == 0) {
                     errorMessage = "Please enter a password";
                     txtSignUpPassword.requestFocus();
-                }
-
-                else if (rePassword.length() == 0){
+                } else if (rePassword.length() == 0) {
                     errorMessage = "Please re-enter your password";
                     txtSignUpRePassword.requestFocus();
                 }
 
-                boolean isPasswordMatches = password.length() != 0 && rePassword.length() != 0
-                        && password.length() == rePassword.length() && password.equals(rePassword);
-                if(!isPasswordMatches){
+                boolean isPasswordMatches = password.length() != 0
+                        && rePassword.length() != 0 && password.equals(rePassword);
+                if (!isPasswordMatches) {
                     errorMessage = "Password and confirm password does not match";
                 }
 
-                if(errorMessage.length() == 0){
+                if (errorMessage.length() == 0) {
 
                     // Storing data to DB
+                    ContentValues values = new ContentValues();
+                    values.put("firstName", firstName);
+                    values.put("lastName", lastName);
+                    values.put("emailAddress", email);
+                    values.put("password", password);
 
-                    // Then start main activity
-                    finish();
-                    Intent main = new Intent(SignUpActivity.this, MainActivity.class);
-                    startActivity(main);
-                }
-                else {
+                    long newRowId = wdb.insert("Users", null, values);
+                    if (newRowId > 0) {
+                        String insertDefaultCategories = "INSERT INTO Categories (id, categoryName, userId) Values (null, 'Meals', "
+                                + newRowId + "), (null, 'Education', " + newRowId + "), (null, 'Entertainment', "
+                                + newRowId + "), (null, 'Transportation', " + newRowId + ");";
+                        wdb.execSQL(insertDefaultCategories);
+
+                        Toast.makeText(SignUpActivity.this, "Registration was successfully", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(SignUpActivity.this, "An error has occurred. Please try again.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
                     Toast.makeText(SignUpActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
-
     }
 
     public static boolean isValidEmail(CharSequence target) {
