@@ -31,6 +31,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(TableDefinitions.SQL_CREATE_CATEGORIES);
         db.execSQL(TableDefinitions.SQL_CREATE_EXPENSES);
         db.execSQL(TableDefinitions.SQL_CREATE_SETTINGS);
+        // Create seed data
+        CreateSeedData(db);
         Log.d("MyDB", "onCreate");
     }
 
@@ -46,5 +48,12 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.d("MyDB", "onDowngrade");
         onUpgrade(db, oldVersion, newVersion);
+    }
+
+    private void CreateSeedData(SQLiteDatabase db){
+        db.execSQL(SeedData.SQL_INSERT_USERS);
+        db.execSQL(SeedData.SQL_INSERT_SETTINGS);
+        db.execSQL(SeedData.SQL_INSERT_CATEGORIES);
+        db.execSQL(SeedData.SQL_INSERT_EXPENSES);
     }
 }

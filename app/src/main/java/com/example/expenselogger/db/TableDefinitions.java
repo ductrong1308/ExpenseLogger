@@ -9,7 +9,7 @@ public class TableDefinitions {
             "DROP TABLE IF EXISTS Users ";
 
     public static final String SQL_CREATE_EXPENSES =
-            "CREATE TABLE Expenses (id integer primary key, createdDate text, spendOn text,  userId integer, " +
+            "CREATE TABLE Expenses (id integer primary key, createdDate text, category text, amount real, userId integer, " +
                     "FOREIGN KEY(userId) REFERENCES Users(id) on delete cascade)";
     public static final String SQL_DELETE_EXPENSES =
             "DROP TABLE IF EXISTS Expenses ";
