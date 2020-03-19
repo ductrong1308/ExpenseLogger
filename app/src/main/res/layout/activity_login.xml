@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     tools:context="com.example.expenselogger.activities.LoginActivity">
 
     <TextView
@@ -11,7 +13,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="@string/expense_logger"
+        android:text="@string/sign_in"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,7 +25,7 @@
     <EditText
         android:id="@+id/txtEmail"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:ems="10"
         android:hint="@string/email"
         android:inputType="text|textEmailAddress"
@@ -37,7 +39,7 @@
     <EditText
         android:id="@+id/txtPassword"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:ems="10"
         android:hint="@string/password"
         android:inputType="textPassword"
@@ -50,7 +52,7 @@
 
     <Button
         android:id="@+id/btnLogin"
-        android:layout_width="359dp"
+        android:layout_width="0dp"
         android:layout_height="60dp"
         android:text="@string/sign_in"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -62,15 +64,15 @@
     <TextView
         android:id="@+id/textViewSignup"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:layout_height="60dp"
+        android:gravity="center_horizontal|center_vertical"
         android:text="@string/sign_up"
         android:textColor="#0000FF"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.526"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnLogin"
-        app:layout_constraintVertical_bias="0.091" />
+        app:layout_constraintVertical_bias="0.141" />
 </androidx.constraintlayout.widget.ConstraintLayout>

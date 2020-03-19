@@ -3,6 +3,7 @@ package com.example.expenselogger;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.pm.SigningInfo;
 import android.os.Bundle;
 
 import com.example.expenselogger.activities.LoginActivity;

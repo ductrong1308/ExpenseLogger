@@ -1,6 +1,7 @@
 package com.example.expenselogger.db;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
@@ -8,6 +9,14 @@ import android.view.Gravity;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.expenselogger.SharedPrefHandler;
+import com.example.expenselogger.activities.LoginActivity;
+import com.example.expenselogger.activities.MainActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBoperationSupport {
 
@@ -74,6 +83,22 @@ public class DBoperationSupport {
             }
         } catch (Exception ex) {
         }
+    }
+
+    public static ArrayList<String> GetCategoriesByUserId(SQLiteDatabase wdb, int userId){
+        ArrayList<String> categories = new ArrayList<String>();
+        String query = "SELECT categoryName FROM Categories WHERE userID = " + userId;
+        Cursor cursor = wdb.rawQuery(query, null);
+
+        int size = cursor.getCount();
+        if (size != 0) {
+            while (cursor.moveToNext()){
+                categories.add(cursor.getString(cursor.getColumnIndex("categoryName")));
+            }
+            cursor.close();
+        }
+
+        return  categories;
     }
 
     public static void close() {
