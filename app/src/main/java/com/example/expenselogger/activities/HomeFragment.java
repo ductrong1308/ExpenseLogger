@@ -2,17 +2,21 @@ package com.example.expenselogger.activities;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +25,7 @@ import androidx.fragment.app.Fragment;
 import com.example.expenselogger.R;
 import com.example.expenselogger.SharedPrefHandler;
 import com.example.expenselogger.db.DBoperationSupport;
+import com.example.expenselogger.utils.AppMessages;
 import com.example.expenselogger.utils.AppUtils;
 
 import java.text.SimpleDateFormat;
@@ -32,6 +37,10 @@ import java.util.GregorianCalendar;
 public class HomeFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     SQLiteDatabase wdb;
+    ArrayList<String> categories;
+    String selectedCategory;
+    String createdDate;
+    int userId;
 
     @Nullable
     @Override
@@ -49,23 +58,30 @@ public class HomeFragment extends Fragment implements AdapterView.OnItemSelected
         wdb = DBoperationSupport.getWritable(getActivity());
 
         String userIdInSharedPref = SharedPrefHandler.getData("USERID", getActivity());
-        int userId = 1;
+        userId = 1;
 
-        if(userIdInSharedPref != null && userIdInSharedPref.length() != 0){
+        if (userIdInSharedPref != null && userIdInSharedPref.length() != 0) {
             userId = Integer.parseInt(userIdInSharedPref);
         }
-        ArrayList<String> categories =
-                DBoperationSupport.GetCategoriesByUserId(wdb, userId);
 
-        Spinner spinner = (Spinner) getView().findViewById(R.id.spinnerCategory);
+        categories = DBoperationSupport.GetCategoriesByUserId(wdb, userId);
+        selectedCategory = categories.get(0);
+
+        final Spinner spinner = (Spinner) getView().findViewById(R.id.spinnerCategory);
         Button buttonDatePicker = (Button) getView().findViewById(R.id.buttonDatePicker);
-        TextView textViewDate = (TextView) getView().findViewById(R.id.textViewDate);
+        Button buttonAdd = (Button) getView().findViewById(R.id.buttonAdd);
+        final EditText textBoxAmount = (EditText) getView().findViewById(R.id.textboxAmount);
+        final TextView textViewDate = (TextView) getView().findViewById(R.id.textViewDate);
 
-        textViewDate.setText(new SimpleDateFormat(AppUtils.DateFormat).format(new Date()));
+        Date today = new Date();
+        textViewDate.setText(new SimpleDateFormat(AppUtils.DateFormat).format(today));
+        this.createdDate = AppUtils.ToDateFormatInDB(today);
 
-        ArrayAdapter<String> spinnerArrayAdapter =
-                new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categories );
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                getActivity(), android.R.layout.simple_spinner_item, categories);
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
+
 
         buttonDatePicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,14 +89,54 @@ public class HomeFragment extends Fragment implements AdapterView.OnItemSelected
                 showDatePickerDialog();
             }
         });
+
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    if (textBoxAmount.getText().length() == 0) {
+                        AppUtils.ShowErrorMessage(getActivity(), AppMessages.AmountIsRequired);
+                    } else {
+                        String insertNewExpenseQuery =
+                                "INSERT INTO Expenses (id, createdDate, category, amount, userId) VALUES (null, '"
+                                        + createdDate + "', '" + selectedCategory + "', "
+                                        + textBoxAmount.getText() + ", " + userId + ")";
+                        wdb.execSQL(insertNewExpenseQuery);
+
+                        AppUtils.ShowMessage(getActivity(), AppMessages.ExpenseAdded);
+                        ClearData(textBoxAmount, textViewDate, spinner);
+                    }
+                } catch (Exception ex) {
+                    AppUtils.ShowErrorMessage(getActivity(), AppMessages.AnErrorHasOccurred);
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 
-    private  void showDatePickerDialog(){
+    private void ClearData(EditText textBoxAmount, TextView textViewDate, Spinner spinner){
+        Date today = new Date();
+        textBoxAmount.setText("");
+        textViewDate.setText(new SimpleDateFormat(AppUtils.DateFormat).format(today));
+        spinner.setSelection(0);
+        this.createdDate = AppUtils.ToDateFormatInDB(today);
+
+        // Hide soft keyboard.
+        View view = getView();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            view.clearFocus();
+        }
+    }
+
+    private void showDatePickerDialog() {
         DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 TextView textViewDate = (TextView) getView().findViewById(R.id.textViewDate);
                 textViewDate.setText(AppUtils.ToDateFormat(year, month, dayOfMonth));
+                createdDate = AppUtils.ToDateFormatInDB(year, month, dayOfMonth);
             }
         };
 
@@ -91,12 +147,13 @@ public class HomeFragment extends Fragment implements AdapterView.OnItemSelected
                 Calendar.getInstance().get(Calendar.MONTH),
                 Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
         );
+        datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
         datePickerDialog.show();
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+        this.selectedCategory = categories.get(position);
     }
 
     @Override

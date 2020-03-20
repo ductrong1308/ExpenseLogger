@@ -48,7 +48,8 @@
         android:layout_height="45dp"
         android:layout_marginTop="2dp"
         android:ems="10"
-        android:inputType="textPersonName" />
+        android:inputType="numberDecimal"
+        android:paddingLeft="10dp" />
 
     <TextView
         android:id="@+id/textView19"
@@ -69,7 +70,10 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="7"
-            android:gravity="clip_horizontal|center_vertical" />
+            android:gravity="clip_horizontal|center_vertical"
+            android:paddingLeft="10dp"
+            android:textColor="#000000"
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/buttonDatePicker"
@@ -80,10 +84,10 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/buttonCreate"
+        android:id="@+id/buttonAdd"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginTop="30dp"
-        android:text="Create" />
+        android:text="Add" />
 
 </LinearLayout>

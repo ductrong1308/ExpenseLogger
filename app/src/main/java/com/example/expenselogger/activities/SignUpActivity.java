@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import com.example.expenselogger.R;
 import com.example.expenselogger.db.DBoperationSupport;
+import com.example.expenselogger.utils.AppMessages;
+import com.example.expenselogger.utils.AppUtils;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -70,27 +72,29 @@ public class SignUpActivity extends AppCompatActivity {
 
                 if (errorMessage.length() == 0) {
 
-                    // Storing data to DB
-                    ContentValues values = new ContentValues();
-                    values.put("firstName", firstName);
-                    values.put("lastName", lastName);
-                    values.put("emailAddress", email);
-                    values.put("password", password);
+                    try{
+                        // Storing data to DB
+                        ContentValues values = new ContentValues();
+                        values.put("firstName", firstName);
+                        values.put("lastName", lastName);
+                        values.put("emailAddress", email);
+                        values.put("password", password);
 
-                    long newRowId = wdb.insert("Users", null, values);
-                    if (newRowId > 0) {
+                        long newRowId = wdb.insert("Users", null, values);
                         String insertDefaultCategories = "INSERT INTO Categories (id, categoryName, userId) Values (null, 'Meals', "
                                 + newRowId + "), (null, 'Education', " + newRowId + "), (null, 'Entertainment', "
                                 + newRowId + "), (null, 'Transportation', " + newRowId + ");";
                         wdb.execSQL(insertDefaultCategories);
 
-                        Toast.makeText(SignUpActivity.this, "Registration was successfully", Toast.LENGTH_SHORT).show();
+                        AppUtils.ShowMessage(SignUpActivity.this, AppMessages.RegistrationOK);
                         finish();
-                    } else {
-                        Toast.makeText(SignUpActivity.this, "An error has occurred. Please try again.", Toast.LENGTH_SHORT).show();
                     }
+                    catch (Exception ex){
+                        AppUtils.ShowErrorMessage(SignUpActivity.this, AppMessages.AnErrorHasOccurred);
+                    }
+
                 } else {
-                    Toast.makeText(SignUpActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    AppUtils.ShowErrorMessage(SignUpActivity.this, errorMessage);
                 }
             }
         });

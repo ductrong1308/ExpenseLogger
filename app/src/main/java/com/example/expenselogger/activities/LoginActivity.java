@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.example.expenselogger.R;
 import com.example.expenselogger.SharedPrefHandler;
 import com.example.expenselogger.db.DBoperationSupport;
+import com.example.expenselogger.utils.AppMessages;
+import com.example.expenselogger.utils.AppUtils;
 
 import org.w3c.dom.Text;
 
@@ -50,27 +52,32 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = txtEmail.getText().toString();
-                String password = txtPassword.getText().toString();
+                try{
+                    String email = txtEmail.getText().toString();
+                    String password = txtPassword.getText().toString();
 
-                String selectUserQuery = "SELECT * FROM Users WHERE emailAddress = '" + email + "' AND password = '" + password + "' ";
-                Cursor cursor = wdb.rawQuery(selectUserQuery, null);
-                int size = cursor.getCount();
-                if (size == 0) {
-                    Toast.makeText(LoginActivity.this, "Invalid email and/or password", Toast.LENGTH_SHORT).show();
-                } else {
-                    cursor.moveToFirst();
-                    String userId = cursor.getString(cursor.getColumnIndex("id"));
-                    String userFirstName = cursor.getString(cursor.getColumnIndex("firstName"));
-                    String userLastName = cursor.getString(cursor.getColumnIndex("lastName"));
-                    cursor.close();
-                    // Saving these data to SharedPref for later use purpose.
-                    SharedPrefHandler.storeData("USERID", userId, LoginActivity.this);
-                    SharedPrefHandler.storeData("USERFNAME", userFirstName, LoginActivity.this);
-                    SharedPrefHandler.storeData("USERLNAME", userLastName, LoginActivity.this);
+                    String selectUserQuery = "SELECT * FROM Users WHERE emailAddress = '" + email + "' AND password = '" + password + "' ";
+                    Cursor cursor = wdb.rawQuery(selectUserQuery, null);
+                    int size = cursor.getCount();
+                    if (size == 0) {
+                        AppUtils.ShowErrorMessage(LoginActivity.this, AppMessages.InvalidLoginInfo);
+                    } else {
+                        cursor.moveToFirst();
+                        String userId = cursor.getString(cursor.getColumnIndex("id"));
+                        String userFirstName = cursor.getString(cursor.getColumnIndex("firstName"));
+                        String userLastName = cursor.getString(cursor.getColumnIndex("lastName"));
+                        cursor.close();
+                        // Saving these data to SharedPref for later use purpose.
+                        SharedPrefHandler.storeData("USERID", userId, LoginActivity.this);
+                        SharedPrefHandler.storeData("USERFNAME", userFirstName, LoginActivity.this);
+                        SharedPrefHandler.storeData("USERLNAME", userLastName, LoginActivity.this);
 
-                    Intent main = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(main);
+                        Intent main = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(main);
+                    }
+                }
+                catch (Exception ex){
+                    AppUtils.ShowErrorMessage(LoginActivity.this, AppMessages.AnErrorHasOccurred);
                 }
             }
         });
