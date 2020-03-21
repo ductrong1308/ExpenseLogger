@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
+import android.util.Pair;
 import android.view.Gravity;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 import com.example.expenselogger.SharedPrefHandler;
 import com.example.expenselogger.activities.LoginActivity;
 import com.example.expenselogger.activities.MainActivity;
+import com.example.expenselogger.classes.Expense;
+import com.example.expenselogger.utils.AppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,6 +102,34 @@ public class DBoperationSupport {
         }
 
         return  categories;
+    }
+
+    public static Pair<ArrayList<Expense>, Double> GetExpenseByDate(int userId, String fromDate, String toDate){
+
+        double sum = 0;
+        ArrayList<Expense> expenses = new ArrayList<Expense>();
+        String query =
+                "SELECT * FROM Expenses WHERE userID = " + userId
+                        + " AND createdDate BETWEEN '" + fromDate + "' AND '" + toDate + "';";
+        Cursor cursor = wdb.rawQuery(query, null);
+
+        int size = cursor.getCount();
+        if (size != 0) {
+
+            while (cursor.moveToNext()){
+                int id = Integer.parseInt(cursor.getString(cursor.getColumnIndex("id")));
+                double amount = Double.parseDouble(cursor.getString(cursor.getColumnIndex("amount")));
+                String createdDate = cursor.getString(cursor.getColumnIndex("createdDate"));
+                String category = cursor.getString(cursor.getColumnIndex("category"));
+                Expense expense = new Expense(id, category, createdDate, amount);
+                sum += amount;
+
+                expenses.add(expense);
+            }
+            cursor.close();
+        }
+
+        return new Pair<ArrayList<Expense>, Double>(expenses, sum);
     }
 
     public static void close() {

@@ -40,7 +40,7 @@ public class HomeFragment extends Fragment implements AdapterView.OnItemSelected
     ArrayList<String> categories;
     String selectedCategory;
     String createdDate;
-    int userId;
+    int userId = 1;
 
     @Nullable
     @Override
@@ -58,8 +58,6 @@ public class HomeFragment extends Fragment implements AdapterView.OnItemSelected
         wdb = DBoperationSupport.getWritable(getActivity());
 
         String userIdInSharedPref = SharedPrefHandler.getData("USERID", getActivity());
-        userId = 1;
-
         if (userIdInSharedPref != null && userIdInSharedPref.length() != 0) {
             userId = Integer.parseInt(userIdInSharedPref);
         }

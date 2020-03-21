@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -19,7 +19,7 @@
             android:layout_weight="0"
             android:gravity="left|center_vertical"
             android:text="Filter By: "
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <Spinner
             android:id="@+id/spinnerFilterBy"
@@ -30,9 +30,10 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layoutFromDate"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <TextView
@@ -42,15 +43,17 @@
             android:layout_weight="0"
             android:gravity="left|center_vertical"
             android:text="From Date: "
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/textViewFromDate"
             android:layout_width="10dp"
             android:layout_height="45dp"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="10dp"
             android:text="TextView"
+            android:textColor="#000000"
             android:textSize="16sp" />
 
         <Button
@@ -62,9 +65,10 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layoutToDate"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <TextView
@@ -80,8 +84,11 @@
             android:layout_width="wrap_content"
             android:layout_height="45dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="TextView" />
+            android:gravity="left|center_vertical"
+            android:paddingLeft="10dp"
+            android:text="TextView"
+            android:textColor="#000000"
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/buttonToDate"
@@ -95,7 +102,46 @@
         android:id="@+id/buttonView"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:text="View" />
+
+    <LinearLayout
+        android:id="@+id/layoutTotalSpent"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="left|center_vertical"
+            android:text="Total Spent: "
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textViewTotalSpent"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="left|center_vertical"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/expenseListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
 </LinearLayout>

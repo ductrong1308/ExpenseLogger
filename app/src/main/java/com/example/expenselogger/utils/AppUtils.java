@@ -7,12 +7,23 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.expenselogger.SharedPrefHandler;
+
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class AppUtils {
     public static String DateFormat = "MMMM dd, yyyy";
+    public static String DateFormatDB = "yyyy-MM-dd";
+
+
+    public static  String ToDateFormat(Date date) {
+        return ToDateFormat(date.getYear(), date.getMonth(), date.getDay());
+    }
 
     public static String ToDateFormat(int year, int month, int dayOfMonth) {
         Date date = new GregorianCalendar(year, month, dayOfMonth).getTime();
@@ -22,7 +33,7 @@ public class AppUtils {
 
     public static String ToDateFormatInDB(int year, int month, int dayOfMonth) {
         Date date = new GregorianCalendar(year, month, dayOfMonth).getTime();
-        String formattedDate = new SimpleDateFormat("yyyy-m-dd").format(date);
+        String formattedDate = new SimpleDateFormat(DateFormatDB).format(date);
         return formattedDate;
     }
 
@@ -39,6 +50,46 @@ public class AppUtils {
                 + message + "</b></font>"), Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 170);
         toast.show();
+    }
+
+    public static String ToDateFormatFromString(String dateInString){
+        SimpleDateFormat formatter = new SimpleDateFormat(DateFormatDB);
+        String dateToDisplay = "";
+        try {
+            Date date = formatter.parse(dateInString);
+            dateToDisplay = ToDateFormat(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return dateToDisplay;
+    }
+
+    public static String FormatCurrency(double money){
+        //String currency = SharedPrefHandler.getData("CURRENCY", null);
+        String currency = "CAD";
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("en", "CA"));
+        switch (currency){
+            case "CAD":
+                break;
+            case "USD":
+                numberFormat = NumberFormat.getCurrencyInstance(new Locale("en", "US"));
+                break;
+            case "GBP":
+                numberFormat = NumberFormat.getCurrencyInstance(new Locale("en", "GB"));
+                break;
+            case "EUR":
+                numberFormat = NumberFormat.getCurrencyInstance(new Locale("fr", "FR"));
+                break;
+            case "CNY":
+                numberFormat = NumberFormat.getCurrencyInstance(new Locale("zh", "CN"));
+                break;
+            case "JPY":
+                numberFormat = NumberFormat.getCurrencyInstance(new Locale("ja", "JP"));
+                break;
+        }
+
+        return numberFormat.format(money);
     }
 
     public static void ShowErrorMessage(Context context, String message) {
