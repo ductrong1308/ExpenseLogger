@@ -17,12 +17,21 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class AppUtils {
-    public static String DateFormat = "MMMM dd, yyyy";
+    public static String DateFormat = "dd MMMM yyyy";
     public static String DateFormatDB = "yyyy-MM-dd";
 
+    public static int GetCurrentLoggedInUserId(Context context){
+        int userId = 1;
+        String userIdInSharedPref = SharedPrefHandler.getData("USERID", context);
+        if (userIdInSharedPref != null && userIdInSharedPref.length() != 0) {
+            userId = Integer.parseInt(userIdInSharedPref);
+        }
+
+        return  userId;
+    }
 
     public static  String ToDateFormat(Date date) {
-        return ToDateFormat(date.getYear(), date.getMonth(), date.getDay());
+        return new SimpleDateFormat(DateFormat).format(date);
     }
 
     public static String ToDateFormat(int year, int month, int dayOfMonth) {
@@ -38,7 +47,7 @@ public class AppUtils {
     }
 
     public static String ToDateFormatInDB(Date date) {
-        return ToDateFormatInDB(date.getYear(), date.getMonth(), date.getDay());
+        return new SimpleDateFormat(DateFormatDB).format(date);
     }
 
     public static void ToastMessage(Context context, String message, boolean isError) {
@@ -65,9 +74,9 @@ public class AppUtils {
         return dateToDisplay;
     }
 
-    public static String FormatCurrency(double money){
-        //String currency = SharedPrefHandler.getData("CURRENCY", null);
-        String currency = "CAD";
+    public static String FormatCurrency(Context context, double money){
+        String currency = SharedPrefHandler.getData("CURRENCY", context);
+
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("en", "CA"));
         switch (currency){
             case "CAD":

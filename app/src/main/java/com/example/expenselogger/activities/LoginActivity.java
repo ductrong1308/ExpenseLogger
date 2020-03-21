@@ -71,7 +71,9 @@ public class LoginActivity extends AppCompatActivity {
                         SharedPrefHandler.storeData("USERID", userId, LoginActivity.this);
                         SharedPrefHandler.storeData("USERFNAME", userFirstName, LoginActivity.this);
                         SharedPrefHandler.storeData("USERLNAME", userLastName, LoginActivity.this);
-                        SharedPrefHandler.storeData("CURRENCY", "CAD", LoginActivity.this);
+
+                        String userSelectedCurrency = DBoperationSupport.GetUserCurrency(Integer.parseInt(userId));
+                        SharedPrefHandler.storeData("CURRENCY", userSelectedCurrency, LoginActivity.this);
 
                         Intent main = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(main);

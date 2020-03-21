@@ -34,7 +34,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class HomeFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class HomeFragment extends Fragment {
 
     SQLiteDatabase wdb;
     ArrayList<String> categories;
@@ -57,11 +57,7 @@ public class HomeFragment extends Fragment implements AdapterView.OnItemSelected
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         wdb = DBoperationSupport.getWritable(getActivity());
 
-        String userIdInSharedPref = SharedPrefHandler.getData("USERID", getActivity());
-        if (userIdInSharedPref != null && userIdInSharedPref.length() != 0) {
-            userId = Integer.parseInt(userIdInSharedPref);
-        }
-
+        this.userId = AppUtils.GetCurrentLoggedInUserId(getActivity());
         categories = DBoperationSupport.GetCategoriesByUserId(wdb, userId);
         selectedCategory = categories.get(0);
 
@@ -80,6 +76,17 @@ public class HomeFragment extends Fragment implements AdapterView.OnItemSelected
         spinnerArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
 
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedCategory = categories.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         buttonDatePicker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,15 +154,5 @@ public class HomeFragment extends Fragment implements AdapterView.OnItemSelected
         );
         datePickerDialog.getDatePicker().setMaxDate(new Date().getTime());
         datePickerDialog.show();
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        this.selectedCategory = categories.get(position);
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
     }
 }

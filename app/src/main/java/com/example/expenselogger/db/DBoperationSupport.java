@@ -88,35 +88,34 @@ public class DBoperationSupport {
         }
     }
 
-    public static ArrayList<String> GetCategoriesByUserId(SQLiteDatabase wdb, int userId){
+    public static ArrayList<String> GetCategoriesByUserId(SQLiteDatabase wdb, int userId) {
         ArrayList<String> categories = new ArrayList<String>();
         String query = "SELECT categoryName FROM Categories WHERE userID = " + userId;
         Cursor cursor = wdb.rawQuery(query, null);
 
         int size = cursor.getCount();
         if (size != 0) {
-            while (cursor.moveToNext()){
+            while (cursor.moveToNext()) {
                 categories.add(cursor.getString(cursor.getColumnIndex("categoryName")));
             }
             cursor.close();
         }
 
-        return  categories;
+        return categories;
     }
 
-    public static Pair<ArrayList<Expense>, Double> GetExpenseByDate(int userId, String fromDate, String toDate){
-
+    public static Pair<ArrayList<Expense>, Double> GetExpenseByDate(int userId, String fromDate, String toDate) {
         double sum = 0;
         ArrayList<Expense> expenses = new ArrayList<Expense>();
         String query =
                 "SELECT * FROM Expenses WHERE userID = " + userId
-                        + " AND createdDate BETWEEN '" + fromDate + "' AND '" + toDate + "';";
+                        + " AND createdDate BETWEEN '" + fromDate + "' AND '" + toDate + "' ORDER BY date(createdDate) DESC;";
         Cursor cursor = wdb.rawQuery(query, null);
 
         int size = cursor.getCount();
         if (size != 0) {
 
-            while (cursor.moveToNext()){
+            while (cursor.moveToNext()) {
                 int id = Integer.parseInt(cursor.getString(cursor.getColumnIndex("id")));
                 double amount = Double.parseDouble(cursor.getString(cursor.getColumnIndex("amount")));
                 String createdDate = cursor.getString(cursor.getColumnIndex("createdDate"));
@@ -130,6 +129,28 @@ public class DBoperationSupport {
         }
 
         return new Pair<ArrayList<Expense>, Double>(expenses, sum);
+    }
+
+    public static String GetUserCurrency(int userId) {
+        String currencySettingName = "CAD";
+        String query = "SELECT * FROM Settings WHERE userId = " + userId;
+        Cursor cursor = wdb.rawQuery(query, null);
+        int size = cursor.getCount();
+
+        if (size != 0) {
+            cursor.moveToFirst();
+            String value = cursor.getString(cursor.getColumnIndex("value"));
+            if (value.length() > 0) {
+                currencySettingName = value;
+            }
+        }
+        return currencySettingName;
+    }
+
+    public static void UpdateUserCurrency(int userId, String newValue) {
+        String query = "UPDATE Settings SET value = '" + newValue
+                + "' WHERE name = 'Currency' AND userId = " + userId;
+        wdb.execSQL(query);
     }
 
     public static void close() {

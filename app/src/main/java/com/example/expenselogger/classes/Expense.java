@@ -20,7 +20,7 @@ public class Expense {
     }
 
     public String ToString(){
-        return String.format("%-18s | %9s | %s", this.category,
-                AppUtils.FormatCurrency(this.amount), this.createdDate.substring(0, 10));
+        return String.format("%-16s | %10s | %s", this.category,
+                AppUtils.FormatCurrency(null, this.amount), this.createdDate.substring(0, 10));
     }
 }

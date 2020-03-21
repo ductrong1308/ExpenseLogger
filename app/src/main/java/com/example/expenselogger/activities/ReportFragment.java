@@ -1,6 +1,7 @@
 package com.example.expenselogger.activities;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Pair;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ReportFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class ReportFragment extends Fragment {
 
     SQLiteDatabase wdb;
     ArrayList<Expense> expenseData;
@@ -71,39 +72,91 @@ public class ReportFragment extends Fragment implements AdapterView.OnItemSelect
 
         this.filterBy = getResources().getStringArray(R.array.filterBy);
         this.selectedFilterBy = filterBy[0];
-
-        String userIdInSharedPref = SharedPrefHandler.getData("USERID", getActivity());
-        if (userIdInSharedPref != null && userIdInSharedPref.length() != 0) {
-            userId = Integer.parseInt(userIdInSharedPref);
-        }
+        this.userId = AppUtils.GetCurrentLoggedInUserId(getActivity());
 
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
                 getActivity(), android.R.layout.simple_spinner_item, filterBy);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinnerFilterBy.setAdapter(spinnerArrayAdapter);
 
+        spinnerFilterBy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedFilterBy = filterBy[position];
+                TextView textViewFromDate = (TextView) getView().findViewById(R.id.textViewFromDate);
+                TextView textViewToDate = (TextView) getView().findViewById(R.id.textViewToDate);
+
+                Date selectedFromDate = new Date();
+                Date selectedToDate = new Date();
+                Calendar cal = Calendar.getInstance();
+
+                switch (selectedFilterBy) {
+                    case "Today":
+                        selectedFromDate = today;
+                        selectedToDate = today;
+                        break;
+
+                    case "This week":
+                        cal.set(Calendar.DAY_OF_WEEK, cal.getActualMinimum(Calendar.DAY_OF_WEEK));
+                        selectedFromDate = cal.getTime();
+
+                        cal.set(Calendar.DAY_OF_WEEK, cal.getActualMaximum(Calendar.DAY_OF_WEEK));
+                        selectedToDate = cal.getTime();
+                        break;
+
+                    case "This month":
+                        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
+                        selectedFromDate = cal.getTime();
+
+                        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+                        selectedToDate = cal.getTime();
+                        break;
+
+                    case "This year":
+                        cal.set(Calendar.DAY_OF_YEAR, cal.getActualMinimum(Calendar.DAY_OF_YEAR));
+                        selectedFromDate = cal.getTime();
+
+                        cal.set(Calendar.DAY_OF_YEAR, cal.getActualMaximum(Calendar.DAY_OF_YEAR));
+                        selectedToDate = cal.getTime();
+                        break;
+                }
+
+                if (selectedToDate.compareTo(today) > 0) {
+                    selectedToDate = today;
+                }
+
+                textViewFromDate.setText(AppUtils.ToDateFormat(selectedFromDate));
+                textViewToDate.setText(AppUtils.ToDateFormat(selectedToDate));
+                fromDate = AppUtils.ToDateFormatInDB(selectedFromDate);
+                toDate = AppUtils.ToDateFormatInDB(selectedToDate);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         buttonView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                try{
+                try {
                     Pair<ArrayList<Expense>, Double> data = DBoperationSupport.GetExpenseByDate(userId, fromDate, toDate);
                     expenseData = data.first;
                     sumExpense = data.second;
 
-                    if(expenseData.size() == 0){
+                    if (expenseData.size() == 0) {
                         getView().findViewById(R.id.layoutTotalSpent).setVisibility(View.INVISIBLE);
                         sumExpense = 0;
                         AppUtils.ShowMessage(getActivity(), AppMessages.NoDataFound);
-                    }
-                    else {
+                    } else {
                         getView().findViewById(R.id.layoutTotalSpent).setVisibility(View.VISIBLE);
                         TextView totalSpent = (TextView) getView().findViewById(R.id.textViewTotalSpent);
 
-                        totalSpent.setText(AppUtils.FormatCurrency(sumExpense));
+                        totalSpent.setText(AppUtils.FormatCurrency(getActivity(), sumExpense));
                     }
-                }
-                catch (Exception ex){
+                } catch (Exception ex) {
                     AppUtils.ShowErrorMessage(getActivity(), AppMessages.AnErrorHasOccurred);
                 }
 
@@ -167,14 +220,6 @@ public class ReportFragment extends Fragment implements AdapterView.OnItemSelect
         datePickerDialog.show();
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        this.selectedFilterBy = this.filterBy[position];
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
+    private void OpenEditExpenseDialog() {
     }
 }

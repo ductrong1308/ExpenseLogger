@@ -8,4 +8,5 @@ public class AppMessages {
     public static String RegistrationOK = "Registration was successfully";
     public static String InvalidLoginInfo = "Invalid email and/or password";
     public static String NoDataFound = "No data found";
+    public static String CurrencySettingSaved = "Currency setting was saved successfully";
 }
