@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.expenselogger.SharedPrefHandler;
 import com.example.expenselogger.activities.LoginActivity;
 import com.example.expenselogger.activities.MainActivity;
+import com.example.expenselogger.classes.Category;
 import com.example.expenselogger.classes.Expense;
 import com.example.expenselogger.utils.AppUtils;
 
@@ -88,7 +89,7 @@ public class DBoperationSupport {
         }
     }
 
-    public static ArrayList<String> GetCategoriesByUserId(SQLiteDatabase wdb, int userId) {
+    public static ArrayList<String> GetCategoriesByUserId(int userId) {
         ArrayList<String> categories = new ArrayList<String>();
         String query = "SELECT categoryName FROM Categories WHERE userID = " + userId;
         Cursor cursor = wdb.rawQuery(query, null);
@@ -98,8 +99,8 @@ public class DBoperationSupport {
             while (cursor.moveToNext()) {
                 categories.add(cursor.getString(cursor.getColumnIndex("categoryName")));
             }
-            cursor.close();
         }
+        cursor.close();
 
         return categories;
     }
@@ -114,8 +115,7 @@ public class DBoperationSupport {
         Cursor cursor = wdb.rawQuery(query, null);
 
         int size = cursor.getCount();
-        if (size != 0) {
-
+        if (size > 0) {
             while (cursor.moveToNext()) {
                 int id = Integer.parseInt(cursor.getString(cursor.getColumnIndex("id")));
                 double amount = cursor.getDouble(cursor.getColumnIndex("amount"));
@@ -126,8 +126,8 @@ public class DBoperationSupport {
 
                 expenses.add(expense);
             }
-            cursor.close();
         }
+        cursor.close();
 
         return new Pair<ArrayList<Expense>, Double>(expenses, sum);
     }
@@ -145,6 +145,8 @@ public class DBoperationSupport {
                 currencySettingName = value;
             }
         }
+        cursor.close();
+
         return currencySettingName;
     }
 
@@ -163,6 +165,26 @@ public class DBoperationSupport {
         String query = "UPDATE Expenses SET category = '" + category + "', amount = "
                 + amount + ", createdDate = '" + date + "' WHERE id = " + expenseId;
         wdb.execSQL(query);
+    }
+
+    public static ArrayList<Category> GetAllExpenseCategoriesByUser(int userId){
+        ArrayList<Category> categories = new ArrayList<Category>();
+        String query = "SELECT * FROM Categories WHERE userId = " + userId;
+        Cursor cursor = wdb.rawQuery(query, null);
+
+        int size = cursor.getCount();
+        if(size > 0){
+            while (cursor.moveToNext()) {
+                int id = Integer.parseInt(cursor.getString(cursor.getColumnIndex("id")));
+                String categoryName = cursor.getString(cursor.getColumnIndex("categoryName"));
+                Category category = new Category(id, categoryName);
+
+                categories.add(category);
+            }
+            cursor.close();
+        }
+
+        return categories;
     }
 
     public static void close() {

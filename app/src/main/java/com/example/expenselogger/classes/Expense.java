@@ -24,7 +24,7 @@ public class Expense {
     }
 
     public String GetCreatedDate() {
-        return this.createdDate;
+        return this.createdDate.substring(0, 10);
     }
 
     public String GetCategory() {
@@ -32,7 +32,11 @@ public class Expense {
     }
 
     public String ToString() {
-        return String.format("%-16s | %10s | %s", this.category,
-                AppUtils.FormatCurrency(null, this.amount), this.createdDate.substring(0, 10));
+        String date = this.createdDate.substring(0, 10);
+        String[] dateItem = date.split("-");
+        String dateFormat = AppUtils.ToDateFormat(
+                Integer.parseInt(dateItem[0]), Integer.parseInt(dateItem[1]), Integer.parseInt(dateItem[2]));
+
+        return String.format("%25s %20s", dateFormat, AppUtils.FormatCurrency(null, this.amount));
     }
 }

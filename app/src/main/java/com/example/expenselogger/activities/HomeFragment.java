@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment {
         wdb = DBoperationSupport.getWritable(getActivity());
 
         this.userId = AppUtils.GetCurrentLoggedInUserId(getActivity());
-        categories = DBoperationSupport.GetCategoriesByUserId(wdb, userId);
+        categories = DBoperationSupport.GetCategoriesByUserId(userId);
         selectedCategory = categories.get(0);
 
         final Spinner spinner = (Spinner) getView().findViewById(R.id.spinnerCategory);

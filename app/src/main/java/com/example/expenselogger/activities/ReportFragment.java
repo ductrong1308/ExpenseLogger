@@ -173,7 +173,6 @@ public class ReportFragment extends Fragment implements EditExpenseDialog.EditEx
                 list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        //Toast.makeText(getActivity(), expenseData[i], Toast.LENGTH_SHORT).show();
                         openEditExpenseDialog(expenseData.get(i));
                     }
                 });

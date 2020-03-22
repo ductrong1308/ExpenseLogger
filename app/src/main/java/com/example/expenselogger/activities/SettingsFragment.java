@@ -1,25 +1,36 @@
 package com.example.expenselogger.activities;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.expenselogger.R;
 import com.example.expenselogger.SharedPrefHandler;
+import com.example.expenselogger.classes.Category;
 import com.example.expenselogger.db.DBoperationSupport;
 import com.example.expenselogger.utils.AppMessages;
 import com.example.expenselogger.utils.AppUtils;
+import com.example.expenselogger.utils.CategoryCustomAdapter;
+import com.example.expenselogger.utils.SwipeToDelete;
+import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,6 +43,11 @@ public class SettingsFragment extends Fragment {
     boolean isFirstVisit = true;
     ArrayAdapter<String> spinnerArrayAdapter;
 
+    private RecyclerView recyclerView;
+    private ArrayList<Category> categoriesDataset;
+    private CategoryCustomAdapter categoryCustomAdapter;
+    private LinearLayout theMainLayout;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -43,6 +59,7 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         wdb = DBoperationSupport.getWritable(getActivity());
+        theMainLayout = getView().findViewById(R.id.theMainSettingLayout);
 
         Spinner spinnerCurrencies = (Spinner) getView().findViewById(R.id.spinnerCurrencies);
         Button buttonAdd = (Button)getView().findViewById(R.id.buttonAdd);
@@ -58,6 +75,20 @@ public class SettingsFragment extends Fragment {
         String userSelectedCurrency = DBoperationSupport.GetUserCurrency(userId);
         spinnerCurrencies.setSelection(Arrays.asList(currencies).indexOf(userSelectedCurrency));
         this.selectedCurrency = userSelectedCurrency;
+
+        // RecyclerView
+        recyclerView =(RecyclerView)getView().findViewById(R.id.recyclerViewCategories);
+        recyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        categoriesDataset = DBoperationSupport.GetAllExpenseCategoriesByUser(userId);
+
+        // specify an adapter (see also next example)
+        categoryCustomAdapter = new CategoryCustomAdapter(categoriesDataset);
+        recyclerView.setAdapter(categoryCustomAdapter);
+
+        enableSwipeToDeleteAndUndo();
 
         spinnerCurrencies.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -83,5 +114,41 @@ public class SettingsFragment extends Fragment {
 
             }
         });
+    }
+
+    private void enableSwipeToDeleteAndUndo() {
+        SwipeToDelete swipeToDelete =
+                new SwipeToDelete(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, getContext()) {
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int i) {
+                Log.d("MainActivity","SwipeToDelete");
+
+                final int position = viewHolder.getAdapterPosition();
+                final Category itemToBeDeleted = categoryCustomAdapter.getData(position);
+
+                categoryCustomAdapter.removeItem(position);
+
+
+                Snackbar snackbar = Snackbar
+                        .make(theMainLayout, "Item was removed from the list.", Snackbar.LENGTH_LONG);
+
+                snackbar.setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        categoryCustomAdapter.restoreItem(itemToBeDeleted, position);
+                        recyclerView.scrollToPosition(position);
+                    }
+                });
+
+                snackbar.setActionTextColor(Color.YELLOW);
+                snackbar.show();
+
+            }
+        };
+
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDelete);
+        itemTouchhelper.attachToRecyclerView(recyclerView);
     }
 }

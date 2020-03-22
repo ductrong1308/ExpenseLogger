@@ -116,7 +116,7 @@ public class EditExpenseDialog extends AppCompatDialogFragment {
         textBoxAmount = (EditText) view.findViewById(R.id.textboxAmountEditDialog);
         textViewDate = (TextView) view.findViewById(R.id.textViewDateEditDialog);
 
-        categories = DBoperationSupport.GetCategoriesByUserId(wdb, userId);
+        categories = DBoperationSupport.GetCategoriesByUserId(userId);
 
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
                 getActivity(), android.R.layout.simple_spinner_item, categories);
