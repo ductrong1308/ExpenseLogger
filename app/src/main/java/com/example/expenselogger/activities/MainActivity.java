@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.nav_home:
                     selectedFragment = new HomeFragment();
                     break;
+
                 case R.id.nav_report:
                     selectedFragment = new ReportFragment();
                     break;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, selectedFragment)
+                    .replace(R.id.fragment_container, selectedFragment, "MY_FRAGMENT")
                     .commit();
 
             return true;

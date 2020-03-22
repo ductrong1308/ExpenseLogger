@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.expenselogger.R;
 import com.example.expenselogger.SharedPrefHandler;
@@ -33,17 +34,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ReportFragment extends Fragment {
-
+public class ReportFragment extends Fragment implements EditExpenseDialog.EditExpenseDialogListener {
     SQLiteDatabase wdb;
     ArrayList<Expense> expenseData;
-    String fromDate;
-    String toDate;
-    Date today = new Date();
+    ArrayAdapter<String> spinnerArrayAdapter;
     String[] filterBy;
-    String selectedFilterBy;
+
     int userId = 1;
     double sumExpense = 0;
+    String fromDate;
+    String toDate;
+    String selectedFilterBy;
+    Date today = new Date();
+
+    Button buttonView;
+    Fragment parentView;
 
     @Nullable
     @Override
@@ -56,13 +61,14 @@ public class ReportFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         wdb = DBoperationSupport.getWritable(getActivity());
+        parentView = getActivity().getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
         Spinner spinnerFilterBy = (Spinner) getView().findViewById(R.id.spinnerFilterBy);
         TextView textViewFromDate = (TextView) getView().findViewById(R.id.textViewFromDate);
         TextView textViewToDate = (TextView) getView().findViewById(R.id.textViewToDate);
         Button buttonFromDate = (Button) getView().findViewById(R.id.buttonFromDate);
         Button buttonToDate = (Button) getView().findViewById(R.id.buttonToDate);
-        Button buttonView = (Button) getView().findViewById(R.id.buttonView);
+        buttonView = (Button) getView().findViewById(R.id.buttonView);
 
         getView().findViewById(R.id.layoutTotalSpent).setVisibility(View.INVISIBLE);
         textViewFromDate.setText(AppUtils.ToDateFormat(today));
@@ -74,7 +80,7 @@ public class ReportFragment extends Fragment {
         this.selectedFilterBy = filterBy[0];
         this.userId = AppUtils.GetCurrentLoggedInUserId(getActivity());
 
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+        spinnerArrayAdapter = new ArrayAdapter<String>(
                 getActivity(), android.R.layout.simple_spinner_item, filterBy);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinnerFilterBy.setAdapter(spinnerArrayAdapter);
@@ -133,7 +139,6 @@ public class ReportFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
 
@@ -169,6 +174,7 @@ public class ReportFragment extends Fragment {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         //Toast.makeText(getActivity(), expenseData[i], Toast.LENGTH_SHORT).show();
+                        openEditExpenseDialog(expenseData.get(i));
                     }
                 });
             }
@@ -220,6 +226,13 @@ public class ReportFragment extends Fragment {
         datePickerDialog.show();
     }
 
-    private void OpenEditExpenseDialog() {
+    private void openEditExpenseDialog(Expense expenseDetails) {
+        EditExpenseDialog editExpenseDialog = new EditExpenseDialog(userId, expenseDetails, parentView);
+        editExpenseDialog.show(getFragmentManager(), "Example");
+    }
+
+    @Override
+    public void onActionDone() {
+        buttonView.performClick();
     }
 }

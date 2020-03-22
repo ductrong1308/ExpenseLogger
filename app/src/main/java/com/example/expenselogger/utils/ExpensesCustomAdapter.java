@@ -30,8 +30,11 @@ public class ExpensesCustomAdapter extends ArrayAdapter {
         LayoutInflater inflater = context.getLayoutInflater();
         View rowView = inflater.inflate(R.layout.expenses_layout, null, false);
 
-        TextView txtTitle = (TextView) rowView.findViewById(R.id.expenseItem);
-        txtTitle.setText(expenses.get(position).ToString());
+        TextView row = (TextView) rowView.findViewById(R.id.expenseItem);
+        row.setText(expenses.get(position).ToString());
+        if(position % 2 != 0){
+            row.setBackgroundResource(R.color.oddRow);
+        }
 
         return rowView;
     }

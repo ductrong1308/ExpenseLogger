@@ -30,6 +30,7 @@ public class SettingsFragment extends Fragment {
     String selectedCurrency;
     int userId = 1;
     boolean isFirstVisit = true;
+    ArrayAdapter<String> spinnerArrayAdapter;
 
     @Nullable
     @Override
@@ -49,7 +50,7 @@ public class SettingsFragment extends Fragment {
         this.currencies = getResources().getStringArray(R.array.currencies);
         this.userId = AppUtils.GetCurrentLoggedInUserId(getActivity());
 
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+        spinnerArrayAdapter = new ArrayAdapter<String>(
                 getActivity(), android.R.layout.simple_spinner_item, currencies);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinnerCurrencies.setAdapter(spinnerArrayAdapter);

@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:paddingLeft="10dp"
-    android:paddingRight="10dp">
+    android:paddingRight="10dp"
+    android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textView15"
+        android:id="@+id/textView15EditDialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center_horizontal|center_vertical"
-        android:text="New Expense"
+        android:text="Expense Details"
         android:textSize="30sp" />
 
     <TextView
-        android:id="@+id/textView16"
+        android:id="@+id/textView16EditDialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -26,7 +23,7 @@
         android:textSize="16sp" />
 
     <Spinner
-        android:id="@+id/spinnerCategory"
+        android:id="@+id/spinnerCategoryEditDialog"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_marginTop="2dp"
@@ -35,7 +32,7 @@
         android:outlineSpotShadowColor="#E91E63" />
 
     <TextView
-        android:id="@+id/textView17"
+        android:id="@+id/textView17EditDialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -43,7 +40,7 @@
         android:textSize="16sp" />
 
     <EditText
-        android:id="@+id/textboxAmount"
+        android:id="@+id/textboxAmountEditDialog"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_marginTop="2dp"
@@ -52,7 +49,7 @@
         android:paddingLeft="10dp" />
 
     <TextView
-        android:id="@+id/textView19"
+        android:id="@+id/textView19EditDialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -66,7 +63,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/textViewDate"
+            android:id="@+id/textViewDateEditDialog"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="7"
@@ -76,18 +73,11 @@
             android:textSize="16sp" />
 
         <Button
-            android:id="@+id/buttonDatePicker"
+            android:id="@+id/buttonDatePickerEditDialog"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_weight="0"
             android:background="@drawable/calendar_icon" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/buttonAdd"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="30dp"
-        android:text="Add" />
 
 </LinearLayout>

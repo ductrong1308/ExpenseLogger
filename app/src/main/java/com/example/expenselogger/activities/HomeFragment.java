@@ -41,6 +41,7 @@ public class HomeFragment extends Fragment {
     String selectedCategory;
     String createdDate;
     int userId = 1;
+    ArrayAdapter<String> spinnerArrayAdapter;
 
     @Nullable
     @Override
@@ -71,7 +72,7 @@ public class HomeFragment extends Fragment {
         textViewDate.setText(new SimpleDateFormat(AppUtils.DateFormat).format(today));
         this.createdDate = AppUtils.ToDateFormatInDB(today);
 
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+        spinnerArrayAdapter = new ArrayAdapter<String>(
                 getActivity(), android.R.layout.simple_spinner_item, categories);
         spinnerArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
@@ -105,7 +106,7 @@ public class HomeFragment extends Fragment {
                         String insertNewExpenseQuery =
                                 "INSERT INTO Expenses (id, createdDate, category, amount, userId) VALUES (null, '"
                                         + createdDate + "', '" + selectedCategory + "', "
-                                        + textBoxAmount.getText() + ", " + userId + ")";
+                                        + textBoxAmount.getText().toString() + ", " + userId + ")";
                         wdb.execSQL(insertNewExpenseQuery);
 
                         AppUtils.ShowMessage(getActivity(), AppMessages.ExpenseAdded);

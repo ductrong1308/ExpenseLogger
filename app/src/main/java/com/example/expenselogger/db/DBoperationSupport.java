@@ -109,7 +109,8 @@ public class DBoperationSupport {
         ArrayList<Expense> expenses = new ArrayList<Expense>();
         String query =
                 "SELECT * FROM Expenses WHERE userID = " + userId
-                        + " AND createdDate BETWEEN '" + fromDate + "' AND '" + toDate + "' ORDER BY date(createdDate) DESC;";
+                        + " AND createdDate BETWEEN '" + fromDate + "' AND '" + toDate
+                        + "' ORDER BY date(createdDate) DESC, id DESC";
         Cursor cursor = wdb.rawQuery(query, null);
 
         int size = cursor.getCount();
@@ -117,7 +118,7 @@ public class DBoperationSupport {
 
             while (cursor.moveToNext()) {
                 int id = Integer.parseInt(cursor.getString(cursor.getColumnIndex("id")));
-                double amount = Double.parseDouble(cursor.getString(cursor.getColumnIndex("amount")));
+                double amount = cursor.getDouble(cursor.getColumnIndex("amount"));
                 String createdDate = cursor.getString(cursor.getColumnIndex("createdDate"));
                 String category = cursor.getString(cursor.getColumnIndex("category"));
                 Expense expense = new Expense(id, category, createdDate, amount);
@@ -150,6 +151,17 @@ public class DBoperationSupport {
     public static void UpdateUserCurrency(int userId, String newValue) {
         String query = "UPDATE Settings SET value = '" + newValue
                 + "' WHERE name = 'Currency' AND userId = " + userId;
+        wdb.execSQL(query);
+    }
+
+    public static void DeleteExpense(int expenseId) {
+        String query = "DELETE FROM Expenses WHERE id = " + expenseId;
+        wdb.execSQL(query);
+    }
+
+    public static void UpdateExpense(int expenseId, String category, double amount, String date) {
+        String query = "UPDATE Expenses SET category = '" + category + "', amount = "
+                + amount + ", createdDate = '" + date + "' WHERE id = " + expenseId;
         wdb.execSQL(query);
     }
 
