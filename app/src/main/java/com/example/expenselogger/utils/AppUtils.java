@@ -1,17 +1,21 @@
 package com.example.expenselogger.utils;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.view.Gravity;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.expenselogger.R;
 import com.example.expenselogger.SharedPrefHandler;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -19,6 +23,45 @@ import java.util.Locale;
 public class AppUtils {
     public static String DateFormat = "dd MMMM yyyy";
     public static String DateFormatDB = "yyyy-MM-dd";
+
+    public static ArrayList<String> EntertainmentKeywords = new ArrayList<String>(
+            Arrays.asList("movies", "films", "sports", "football", "stadium",
+                    "ticket", "shopping", "entertainment", "relax", "theatre")
+    );
+
+    public static ArrayList<String> EducationKeywords = new ArrayList<String>(
+            Arrays.asList("books", "tuition fee", "binders", "pens", "pencils", "library", "education", "college", "university")
+    );
+
+    public static ArrayList<String> MealsKeywords = new ArrayList<String>(
+            Arrays.asList("meals", "breakfast", "lunch", "dinner", "snack", "coffee", "cafe",
+                    "bread", "smoothie", "tea", "milk", "eat", "restaurant")
+    );
+
+    public static ArrayList<String> TransportationKeywords = new ArrayList<String>(
+            Arrays.asList("cars", "fuels", "bus", "train", "airplane", "plane", "travels", "transportation")
+    );
+
+    public static ArrayList<String> PetsKeywords = new ArrayList<String>(
+            Arrays.asList("cats", "dogs", "veterinary", "pets")
+    );
+
+    public static Drawable getImageByKeyWord(Context context, String category) {
+        category = category.toLowerCase();
+        if (EntertainmentKeywords.contains(category)) {
+            return context.getResources().getDrawable(R.drawable.entertainment);
+        } else if (EducationKeywords.contains(category)) {
+            return context.getResources().getDrawable(R.drawable.study);
+        } else if (MealsKeywords.contains(category)) {
+            return context.getResources().getDrawable(R.drawable.foods);
+        } else if (TransportationKeywords.contains(category)) {
+            return context.getResources().getDrawable(R.drawable.transportation);
+        } else if (PetsKeywords.contains(category)) {
+            return context.getResources().getDrawable(R.drawable.pets);
+        } else {
+            return context.getResources().getDrawable(R.drawable.general_expense);
+        }
+    }
 
     public static int GetCurrentLoggedInUserId(Context context){
         int userId = 1;

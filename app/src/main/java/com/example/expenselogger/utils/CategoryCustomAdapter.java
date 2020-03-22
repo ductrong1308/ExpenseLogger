@@ -1,5 +1,7 @@
 package com.example.expenselogger.utils;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 public class CategoryCustomAdapter extends RecyclerView.Adapter<CategoryCustomAdapter.MyViewHolder> {
 
     private ArrayList<Category> mDataset;
+    private Context context;
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public CategoryCustomAdapter(ArrayList<Category> myDataset) {
@@ -28,6 +31,7 @@ public class CategoryCustomAdapter extends RecyclerView.Adapter<CategoryCustomAd
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
 
+        context = parent.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View listItem = layoutInflater.inflate(R.layout.categories_item_layout, parent, false);
 
@@ -42,7 +46,17 @@ public class CategoryCustomAdapter extends RecyclerView.Adapter<CategoryCustomAd
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.tView.setText(mDataset.get(position).getCategoryName());
+
+        Category item = mDataset.get(position);
+        holder.tView.setText(item.getCategoryName());
+
+        Drawable imgCategory = AppUtils.getImageByKeyWord(context, item.getCategoryName());
+        imgCategory.setBounds(10, 0, 100, 100);
+        holder.tView.setCompoundDrawables(imgCategory, null, null, null);
+
+        if (position % 2 != 0) {
+            holder.tView.setBackgroundResource(R.color.oddRow);
+        }
 
         // clickable by row
         holder.theLayout.setOnClickListener(new View.OnClickListener() {

@@ -169,7 +169,7 @@ public class DBoperationSupport {
 
     public static ArrayList<Category> GetAllExpenseCategoriesByUser(int userId){
         ArrayList<Category> categories = new ArrayList<Category>();
-        String query = "SELECT * FROM Categories WHERE userId = " + userId;
+        String query = "SELECT * FROM Categories WHERE userId = " + userId + " ORDER BY id ASC";
         Cursor cursor = wdb.rawQuery(query, null);
 
         int size = cursor.getCount();
