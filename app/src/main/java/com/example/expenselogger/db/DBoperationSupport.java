@@ -91,7 +91,7 @@ public class DBoperationSupport {
 
     public static ArrayList<String> GetCategoriesByUserId(int userId) {
         ArrayList<String> categories = new ArrayList<String>();
-        String query = "SELECT categoryName FROM Categories WHERE userID = " + userId;
+        String query = "SELECT categoryName FROM Categories WHERE userID = " + userId + " ORDER BY id ASC";
         Cursor cursor = wdb.rawQuery(query, null);
 
         int size = cursor.getCount();
@@ -167,13 +167,13 @@ public class DBoperationSupport {
         wdb.execSQL(query);
     }
 
-    public static ArrayList<Category> GetAllExpenseCategoriesByUser(int userId){
+    public static ArrayList<Category> GetAllExpenseCategoriesByUser(int userId) {
         ArrayList<Category> categories = new ArrayList<Category>();
         String query = "SELECT * FROM Categories WHERE userId = " + userId + " ORDER BY id ASC";
         Cursor cursor = wdb.rawQuery(query, null);
 
         int size = cursor.getCount();
-        if(size > 0){
+        if (size > 0) {
             while (cursor.moveToNext()) {
                 int id = Integer.parseInt(cursor.getString(cursor.getColumnIndex("id")));
                 String categoryName = cursor.getString(cursor.getColumnIndex("categoryName"));
@@ -185,6 +185,17 @@ public class DBoperationSupport {
         }
 
         return categories;
+    }
+
+    public static void AddExpenseCategory(int userId, String categoryName) {
+        String query = "INSERT INTO categories (id, categoryName, userId) VALUES (null, '"
+                + categoryName + "', " + userId + " )";
+        wdb.execSQL(query);
+    }
+
+    public static void RemoveExpenseCategory(int categoryId){
+        String query = "DELETE FROM Categories WHERE id = " + categoryId;
+        wdb.execSQL(query);
     }
 
     public static void close() {

@@ -1,5 +1,6 @@
 package com.example.expenselogger.activities;
 
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
@@ -22,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.expenselogger.R;
 import com.example.expenselogger.SharedPrefHandler;
+import com.example.expenselogger.SplashScreen;
 import com.example.expenselogger.classes.Category;
 import com.example.expenselogger.db.DBoperationSupport;
 import com.example.expenselogger.utils.AppMessages;
@@ -33,6 +36,13 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import static com.example.expenselogger.utils.AppMessages.AnErrorHasOccurred;
+import static com.example.expenselogger.utils.AppMessages.CategoryDeleted;
+import static com.example.expenselogger.utils.AppMessages.NewCategoryNameRequired;
+import static com.example.expenselogger.utils.AppMessages.NewCategorySaved;
 
 public class SettingsFragment extends Fragment {
 
@@ -62,7 +72,8 @@ public class SettingsFragment extends Fragment {
         theMainLayout = getView().findViewById(R.id.theMainSettingLayout);
 
         Spinner spinnerCurrencies = (Spinner) getView().findViewById(R.id.spinnerCurrencies);
-        Button buttonAdd = (Button)getView().findViewById(R.id.buttonAdd);
+        Button buttonAdd = (Button) getView().findViewById(R.id.buttonAdd);
+        final EditText editTextNewCategory = (EditText) getView().findViewById(R.id.editTextNewCategory);
 
         this.currencies = getResources().getStringArray(R.array.currencies);
         this.userId = AppUtils.GetCurrentLoggedInUserId(getActivity());
@@ -77,76 +88,115 @@ public class SettingsFragment extends Fragment {
         this.selectedCurrency = userSelectedCurrency;
 
         // RecyclerView
-        recyclerView =(RecyclerView)getView().findViewById(R.id.recyclerViewCategories);
+        recyclerView = (RecyclerView) getView().findViewById(R.id.recyclerViewCategories);
         recyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        categoriesDataset = DBoperationSupport.GetAllExpenseCategoriesByUser(userId);
 
-        // specify an adapter (see also next example)
-        categoryCustomAdapter = new CategoryCustomAdapter(categoriesDataset);
-        recyclerView.setAdapter(categoryCustomAdapter);
+        GetDataAndBindToRecyclerView();
 
-        enableSwipeToDeleteAndUndo();
+        EnableSwipeToDeleteAndUndo();
 
         spinnerCurrencies.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(!isFirstVisit){
-                    try{
+                if (!isFirstVisit) {
+                    try {
                         selectedCurrency = currencies[position];
                         DBoperationSupport.UpdateUserCurrency(userId, selectedCurrency);
                         SharedPrefHandler.storeData("CURRENCY", selectedCurrency, getActivity());
                         AppUtils.ShowMessage(getActivity(), AppMessages.CurrencySettingSaved);
-                    }
-                    catch (Exception ex){
+                    } catch (Exception ex) {
                         AppUtils.ShowErrorMessage(getActivity(), AppMessages.AnErrorHasOccurred);
                     }
-                }
-                else {
+                } else {
                     isFirstVisit = false;
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newCategory = editTextNewCategory.getText().toString().trim();
+                if (newCategory.length() == 0) {
+                    AppUtils.ShowErrorMessage(getContext(), NewCategoryNameRequired);
+                } else {
+                    try {
+                        DBoperationSupport.AddExpenseCategory(userId, newCategory);
+                        AppUtils.ShowMessage(getContext(), NewCategorySaved);
+                        editTextNewCategory.setText("");
+                        editTextNewCategory.clearFocus();
+
+                        GetDataAndBindToRecyclerView();
+                    } catch (Exception ex) {
+                        AppUtils.ShowErrorMessage(getContext(), AnErrorHasOccurred);
+                    }
+                }
             }
         });
     }
 
-    private void enableSwipeToDeleteAndUndo() {
+    private void GetDataAndBindToRecyclerView(){
+        categoriesDataset = DBoperationSupport.GetAllExpenseCategoriesByUser(userId);
+        // specify an adapter (see also next example)
+        categoryCustomAdapter = new CategoryCustomAdapter(categoriesDataset);
+        recyclerView.setAdapter(categoryCustomAdapter);
+    }
+
+    private void EnableSwipeToDeleteAndUndo() {
         SwipeToDelete swipeToDelete =
                 new SwipeToDelete(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, getContext()) {
 
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int i) {
-                Log.d("MainActivity","SwipeToDelete");
-
-                final int position = viewHolder.getAdapterPosition();
-                final Category itemToBeDeleted = categoryCustomAdapter.getData(position);
-
-                categoryCustomAdapter.removeItem(position);
-
-
-                Snackbar snackbar = Snackbar
-                        .make(theMainLayout, "Item was removed from the list.", Snackbar.LENGTH_LONG);
-
-                snackbar.setAction("UNDO", new View.OnClickListener() {
                     @Override
-                    public void onClick(View view) {
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int i) {
+                        Log.d("MainActivity", "SwipeToDelete");
 
-                        categoryCustomAdapter.restoreItem(itemToBeDeleted, position);
-                        recyclerView.scrollToPosition(position);
+                        final int position = viewHolder.getAdapterPosition();
+                        final Category itemToBeDeleted = categoryCustomAdapter.getData(position);
+
+                        categoryCustomAdapter.removeItem(position);
+
+                        // Set timer to actual remove item from DB after the Snackbar disappeared
+                        final TimerTask timerTaskRemoveItemFromDB = new TimerTask() {
+                            @Override
+                            public void run() {
+                                try{
+                                    DBoperationSupport.RemoveExpenseCategory(itemToBeDeleted.getId());
+                                    //AppUtils.ShowMessage(getContext(), CategoryDeleted);
+                                }
+                                catch (Exception ex){
+                                    AppUtils.ShowErrorMessage(getContext(), AnErrorHasOccurred);
+                                }
+                            }
+                        };
+
+                        //Can use Snackbar.LENGTH_LONG insted of 3000
+                        Snackbar snackbar = Snackbar
+                                .make(theMainLayout, "Item was removed from the list.", 3000);
+
+                        snackbar.setAction("UNDO", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                categoryCustomAdapter.restoreItem(itemToBeDeleted, position);
+                                recyclerView.scrollToPosition(position);
+                                timerTaskRemoveItemFromDB.cancel();
+                            }
+                        });
+
+                        snackbar.setActionTextColor(Color.YELLOW);
+                        snackbar.show();
+
+                        // Run timerTask after delaying 3 seconds
+                        Timer counter = new Timer();
+                        counter.schedule(timerTaskRemoveItemFromDB, 4000);
                     }
-                });
-
-                snackbar.setActionTextColor(Color.YELLOW);
-                snackbar.show();
-
-            }
-        };
+                };
 
         ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDelete);
         itemTouchhelper.attachToRecyclerView(recyclerView);
