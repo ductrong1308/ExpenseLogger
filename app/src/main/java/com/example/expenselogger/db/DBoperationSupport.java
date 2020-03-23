@@ -17,6 +17,7 @@ import com.example.expenselogger.activities.LoginActivity;
 import com.example.expenselogger.activities.MainActivity;
 import com.example.expenselogger.classes.Category;
 import com.example.expenselogger.classes.Expense;
+import com.example.expenselogger.classes.MonthlyExpenseData;
 import com.example.expenselogger.utils.AppUtils;
 
 import java.util.ArrayList;
@@ -193,10 +194,37 @@ public class DBoperationSupport {
         wdb.execSQL(query);
     }
 
-    public static void RemoveExpenseCategory(int categoryId){
+    public static void RemoveExpenseCategory(int categoryId) {
         String query = "DELETE FROM Categories WHERE id = " + categoryId;
         wdb.execSQL(query);
     }
+
+    public static ArrayList<MonthlyExpenseData> GetMonthlyExpenseData(String year) {
+        ArrayList<MonthlyExpenseData> monthlyExpenseData = new ArrayList<>();
+        String query =
+                "SELECT SUM(amount) AS 'totalExpense', strftime('%m', createdDate) as 'month' " +
+                        "FROM Expenses " +
+                        "WHERE strftime('%Y', createdDate) = '" + year + "' " +
+                        "GROUP BY strftime('%m', createdDate) " +
+                        "ORDER BY month ASC";
+
+        Cursor cursor = wdb.rawQuery(query, null);
+
+        int size = cursor.getCount();
+        if (size > 0) {
+            while (cursor.moveToNext()) {
+                int month = Integer.parseInt(cursor.getString(cursor.getColumnIndex("month")));
+                double amount = cursor.getDouble(cursor.getColumnIndex("totalExpense"));
+                String monthName = AppUtils.Months.get(month - 1);
+                MonthlyExpenseData newData = new MonthlyExpenseData(monthName, amount);
+                monthlyExpenseData.add(newData);
+            }
+        }
+        cursor.close();
+
+        return monthlyExpenseData;
+    }
+
 
     public static void close() {
         if (db != null)

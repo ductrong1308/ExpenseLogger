@@ -25,7 +25,7 @@
         android:layout_weight="0"
         android:gravity="left|center_vertical"
         android:text="@string/currency"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
     <Spinner
         android:id="@+id/spinnerCurrencies"
@@ -41,7 +41,7 @@
         android:layout_marginTop="30dp"
         android:gravity="left|center_vertical"
         android:text="@string/expese_categories"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
     <LinearLayout
         android:layout_width="match_parent"

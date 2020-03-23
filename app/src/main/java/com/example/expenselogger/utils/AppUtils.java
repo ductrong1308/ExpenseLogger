@@ -46,6 +46,10 @@ public class AppUtils {
             Arrays.asList("cats", "dogs", "veterinary", "pets")
     );
 
+    public static ArrayList<String> Months = new ArrayList<>(
+            Arrays.asList("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+    );
+
     public static Drawable getImageByKeyWord(Context context, String category) {
         category = category.toLowerCase();
         if (EntertainmentKeywords.contains(category)) {
