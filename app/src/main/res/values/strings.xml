@@ -10,7 +10,8 @@
     <string name="password">Password</string>
     <string name="re_password">Re-enter Password</string>
 
-    <string name="expese_categories"><u>Expense Categories</u>.</string>
+    <string name="expese_categories"><u>Expense Categories</u></string>
+    <string name="currency"><u>Currency</u></string>
 
     <string-array name="filterBy">
         <item>Today</item>

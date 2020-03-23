@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.nav_settings:
                     selectedFragment = new SettingsFragment();
                     break;
+                case R.id.nav_chart:
+                    selectedFragment = new ChartFragment();
             }
 
             getSupportFragmentManager()
