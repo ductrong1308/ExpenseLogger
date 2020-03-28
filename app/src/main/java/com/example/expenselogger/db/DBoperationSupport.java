@@ -227,7 +227,8 @@ public class DBoperationSupport {
 
 
     public static void close() {
-        if (db != null)
-            db.close();
+        if (db != null){
+            //db.close();
+        }
     }
 }

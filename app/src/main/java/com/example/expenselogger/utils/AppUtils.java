@@ -68,10 +68,15 @@ public class AppUtils {
     }
 
     public static int GetCurrentLoggedInUserId(Context context){
-        int userId = 1;
-        String userIdInSharedPref = SharedPrefHandler.getData("USERID", context);
-        if (userIdInSharedPref != null && userIdInSharedPref.length() != 0) {
-            userId = Integer.parseInt(userIdInSharedPref);
+        int userId = 0;
+        try {
+            String userIdInSharedPref = SharedPrefHandler.getData("USERID", context);
+            if (userIdInSharedPref != null && userIdInSharedPref.length() != 0) {
+                userId = Integer.parseInt(userIdInSharedPref);
+            }
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
         }
 
         return  userId;

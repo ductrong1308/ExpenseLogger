@@ -37,4 +37,11 @@ public class SharedPrefHandler {
 
         return value;
     }
+
+    public static void clearSharedPref(){
+        sharedPref.edit().remove("USERID").commit();
+        sharedPref.edit().remove("USERFNAME").commit();
+        sharedPref.edit().remove("USERLNAME").commit();
+        sharedPref.edit().remove("CURRENCY").commit();
+    }
 }

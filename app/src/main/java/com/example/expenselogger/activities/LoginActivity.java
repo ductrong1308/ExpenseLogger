@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -75,14 +76,23 @@ public class LoginActivity extends AppCompatActivity {
                         String userSelectedCurrency = DBoperationSupport.GetUserCurrency(Integer.parseInt(userId));
                         SharedPrefHandler.storeData("CURRENCY", userSelectedCurrency, LoginActivity.this);
 
-                        Intent main = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(main);
+                        // Login and clear back stack
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        LoginActivity.this.finish();
                     }
                 }
                 catch (Exception ex){
-                    AppUtils.ShowErrorMessage(LoginActivity.this, AppMessages.AnErrorHasOccurred);
+                    AppUtils.ShowErrorMessage(LoginActivity.this, ex.getMessage());
                 }
             }
         });
+    }
+
+    protected void onDestroy() {
+        DBoperationSupport.close();
+        super.onDestroy();
+        Log.d("LoginActivity","onDestroy");
     }
 }
