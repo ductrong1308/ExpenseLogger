@@ -192,6 +192,8 @@ public class ReportFragment extends Fragment implements EditExpenseDialog.EditEx
                 showDatePickerDialog(2);
             }
         });
+
+        buttonView.performClick();
     }
 
     private void showDatePickerDialog(final int datePickerOrder) {
