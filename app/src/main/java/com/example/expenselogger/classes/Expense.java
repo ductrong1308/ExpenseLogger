@@ -35,8 +35,8 @@ public class Expense {
         String date = this.createdDate.substring(0, 10);
         String[] dateItem = date.split("-");
         String dateFormat = AppUtils.ToDateFormat(
-                Integer.parseInt(dateItem[0]), Integer.parseInt(dateItem[1]), Integer.parseInt(dateItem[2]));
+                Integer.parseInt(dateItem[0]), Integer.parseInt(dateItem[1]) - 1, Integer.parseInt(dateItem[2]));
 
-        return String.format("%25s %20s", dateFormat, AppUtils.FormatCurrency(null, this.amount));
+        return String.format("%17s %15s", dateFormat, AppUtils.FormatCurrency(null, this.amount));
     }
 }

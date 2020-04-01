@@ -39,6 +39,6 @@ public class SplashScreen extends AppCompatActivity {
 
         // Run timerTask after delaying 3 seconds
         Timer counter = new Timer();
-        counter.schedule(timerTask, 1000);
+        counter.schedule(timerTask, 2000);
     }
 }

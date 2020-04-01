@@ -67,22 +67,21 @@ public class AppUtils {
         }
     }
 
-    public static int GetCurrentLoggedInUserId(Context context){
+    public static int GetCurrentLoggedInUserId(Context context) {
         int userId = 0;
         try {
             String userIdInSharedPref = SharedPrefHandler.getData("USERID", context);
             if (userIdInSharedPref != null && userIdInSharedPref.length() != 0) {
                 userId = Integer.parseInt(userIdInSharedPref);
             }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        return  userId;
+        return userId;
     }
 
-    public static  String ToDateFormat(Date date) {
+    public static String ToDateFormat(Date date) {
         return new SimpleDateFormat(DateFormat).format(date);
     }
 
@@ -113,7 +112,7 @@ public class AppUtils {
         toast.show();
     }
 
-    public static String ToDateFormatFromString(String dateInString){
+    public static String ToDateFormatFromString(String dateInString) {
         SimpleDateFormat formatter = new SimpleDateFormat(DateFormatDB);
         String dateToDisplay = "";
         try {
@@ -126,11 +125,11 @@ public class AppUtils {
         return dateToDisplay;
     }
 
-    public static String FormatCurrency(Context context, double money){
+    public static String FormatCurrency(Context context, double money) {
         String currency = SharedPrefHandler.getData("CURRENCY", context);
 
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale("en", "CA"));
-        switch (currency){
+        switch (currency) {
             case "CAD":
                 break;
             case "USD":

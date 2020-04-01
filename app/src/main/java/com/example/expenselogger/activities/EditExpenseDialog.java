@@ -147,7 +147,7 @@ public class EditExpenseDialog extends AppCompatDialogFragment {
         String[] dateInString = expenseDetails.GetCreatedDate().split("-");
         textViewDate.setText(AppUtils.ToDateFormat(
                 Integer.parseInt(dateInString[0]),
-                Integer.parseInt(dateInString[1]),
+                Integer.parseInt(dateInString[1]) - 1,
                 Integer.parseInt(dateInString[2])));
         createdDate = expenseDetails.GetCreatedDate();
 

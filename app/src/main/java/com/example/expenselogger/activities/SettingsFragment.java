@@ -1,5 +1,6 @@
 package com.example.expenselogger.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -130,9 +132,7 @@ public class SettingsFragment extends Fragment {
                     try {
                         DBoperationSupport.AddExpenseCategory(userId, newCategory);
                         AppUtils.ShowMessage(getContext(), NewCategorySaved);
-                        editTextNewCategory.setText("");
-                        editTextNewCategory.clearFocus();
-
+                        ClearData(editTextNewCategory);
                         GetDataAndBindToRecyclerView();
                     } catch (Exception ex) {
                         AppUtils.ShowErrorMessage(getContext(), AnErrorHasOccurred);
@@ -140,6 +140,19 @@ public class SettingsFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void ClearData(EditText editTextNewCategory){
+        editTextNewCategory.setText("");
+        editTextNewCategory.clearFocus();
+
+        // Hide soft keyboard.
+        View view = getView();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            view.clearFocus();
+        }
     }
 
     private void GetDataAndBindToRecyclerView(){
